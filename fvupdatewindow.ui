@@ -15,7 +15,7 @@
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_6">
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout">
+    <layout stretch="0,0,1,0" class="QVBoxLayout" name="verticalLayout">
      <item>
       <widget class="QLabel" name="newVersionIsAvailableLabel">
        <property name="font">
