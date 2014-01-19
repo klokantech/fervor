@@ -258,12 +258,12 @@ bool FvUpdater::CheckForUpdates(bool silentAsMuchAsItCouldGet)
 	// Set application name / version is not set yet
 	if (QApplication::applicationName().isEmpty()) {
 		QString appName = QString::fromUtf8(FV_APP_NAME);
-		qWarning() << "QApplication::applicationName is not set, setting it to '" << appName << "'";
+// 		qWarning() << "QApplication::applicationName is not set, setting it to '" << appName << "'";
 		QApplication::setApplicationName(appName);
 	}
 	if (QApplication::applicationVersion().isEmpty()) {
 		QString appVersion = QString::fromUtf8(FV_APP_VERSION);
-		qWarning() << "QApplication::applicationVersion is not set, setting it to '" << appVersion << "'";
+// 		qWarning() << "QApplication::applicationVersion is not set, setting it to '" << appVersion << "'";
 		QApplication::setApplicationVersion(appVersion);
 	}
 
