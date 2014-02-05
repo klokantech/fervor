@@ -25,7 +25,7 @@ public:
 	void SetFeedURL(QUrl feedURL);
 	void SetFeedURL(QString feedURL);
 	QString GetFeedURL();
-	
+
 public slots:
 
 	// Check for updates
@@ -44,6 +44,12 @@ public slots:
 	//
 
 protected:
+
+  enum msgType {
+    INFO_MESSAGE,         // shown always for users
+    NO_UPDATE_MESSAGE,    // shown message only in not-silent mode, but modified
+    CRITICAL_MESSAGE      // shown always
+  };
 
 	friend class FvUpdateWindow;		// Uses GetProposedUpdate() and others
 	friend class FvUpdateConfirmDialog;	// Uses GetProposedUpdate() and others
@@ -98,7 +104,7 @@ private:
 	bool m_silentAsMuchAsItCouldGet;
 
 	// Dialogs (notifications)
-	void showErrorDialog(QString message, bool showEvenInSilentMode = false);			// Show an error message
+	void showErrorDialog(QString message, msgType type = NO_UPDATE_MESSAGE);			// Show an error message
 	void showInformationDialog(QString message, bool showEvenInSilentMode = false);		// Show an informational message
 
 

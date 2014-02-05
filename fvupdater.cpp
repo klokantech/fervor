@@ -218,7 +218,7 @@ void FvUpdater::UpdateInstallationConfirmed()
 
 	// Open a link
 	if (! QDesktopServices::openUrl(proposedUpdate->GetEnclosureUrl())) {
-		showErrorDialog(tr("Unable to open this link in a browser. Please do it manually."), true);
+		showErrorDialog(tr("Unable to open this link in a browser. Please do it manually."), CRITICAL_MESSAGE);
 		return;
 	}
 
@@ -340,7 +340,8 @@ void FvUpdater::httpFeedDownloadFinished()
 	if (m_reply->error()) {
 
 		// Error.
-		showErrorDialog(tr("Feed download failed: %1.").arg(m_reply->errorString()), false);
+//    showErrorDialog(tr("Feed download failed: %1.").arg(m_reply->errorString()), false);
+		showErrorDialog(tr("Updates are unable to detect: %1.").arg(m_reply->errorString()), CRITICAL_MESSAGE);
 
 	} else if (! redirectionTarget.isNull()) {
 		QUrl newUrl = m_feedURL.resolved(redirectionTarget.toUrl());
@@ -479,7 +480,7 @@ bool FvUpdater::xmlParseFeed()
 
 		if (m_xml.error() && m_xml.error() != QXmlStreamReader::PrematureEndOfDocumentError) {
 
-			showErrorDialog(tr("Feed parsing failed: %1 %2.").arg(QString::number(m_xml.lineNumber()), m_xml.errorString()), false);
+			showErrorDialog(tr("Feed parsing failed: %1 %2.").arg(QString::number(m_xml.lineNumber()), m_xml.errorString()), NO_UPDATE_MESSAGE);
 			return false;
 
 		}
@@ -516,7 +517,7 @@ bool FvUpdater::searchDownloadedFeedForUpdates(QString xmlTitle,
 	// Validate
 	if (xmlReleaseNotesLink.isEmpty()) {
 		if (xmlLink.isEmpty()) {
-			showErrorDialog(tr("Feed error: \"release notes\" link is empty"), false);
+			showErrorDialog(tr("Feed error: \"release notes\" link is empty"), NO_UPDATE_MESSAGE);
 			return false;
 		} else {
 			xmlReleaseNotesLink = xmlLink;
@@ -525,11 +526,11 @@ bool FvUpdater::searchDownloadedFeedForUpdates(QString xmlTitle,
 		xmlLink = xmlReleaseNotesLink;
 	}
 	if (! (xmlLink.startsWith("http://") || xmlLink.startsWith("https://"))) {
-		showErrorDialog(tr("Feed error: invalid \"release notes\" link"), false);
+		showErrorDialog(tr("Feed error: invalid \"release notes\" link"), NO_UPDATE_MESSAGE);
 		return false;
 	}
 	if (xmlEnclosureUrl.isEmpty() || xmlEnclosureVersion.isEmpty() || xmlEnclosurePlatform.isEmpty()) {
-        showErrorDialog(tr("Feed error: invalid \"enclosure\" with the download link"), false);
+        showErrorDialog(tr("Feed error: invalid \"enclosure\" with the download link"), NO_UPDATE_MESSAGE);
 		return false;
 	}
 
@@ -568,19 +569,26 @@ bool FvUpdater::searchDownloadedFeedForUpdates(QString xmlTitle,
 }
 
 
-void FvUpdater::showErrorDialog(QString message, bool showEvenInSilentMode)
+void FvUpdater::showErrorDialog(QString message, msgType type)
 {
 	if (m_silentAsMuchAsItCouldGet) {
-		if (! showEvenInSilentMode) {
+		if (type != CRITICAL_MESSAGE) {
 			// Don't show errors in the silent mode
 			return;
 		}
 	}
+	else
+  {
+    if(type == NO_UPDATE_MESSAGE)
+    {
+      message = "No updates were found.";
+    }
+  }
 
 	QMessageBox dlFailedMsgBox;
 	dlFailedMsgBox.setIcon(QMessageBox::Critical);
-	dlFailedMsgBox.setText(tr("Error"));
-	dlFailedMsgBox.setInformativeText(message);
+	dlFailedMsgBox.setWindowTitle(tr("Error"));
+	dlFailedMsgBox.setText(message);
 	dlFailedMsgBox.exec();
 }
 
@@ -595,7 +603,7 @@ void FvUpdater::showInformationDialog(QString message, bool showEvenInSilentMode
 
 	QMessageBox dlInformationMsgBox;
 	dlInformationMsgBox.setIcon(QMessageBox::Information);
-	dlInformationMsgBox.setText(tr("Information"));
-	dlInformationMsgBox.setInformativeText(message);
+	dlInformationMsgBox.setWindowTitle(tr("Information"));
+	dlInformationMsgBox.setText(message);
 	dlInformationMsgBox.exec();
 }
