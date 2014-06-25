@@ -168,6 +168,17 @@ QString FvUpdater::GetFeedURL()
 	return m_feedURL.toString();
 }
 
+// Set /get Dynamic download URL content
+void FvUpdater::SetDynamicUrlContent(QString dynamicUrl)
+{
+  m_dynamicUrl = dynamicUrl;
+}
+
+QString FvUpdater::GetDynamicUrlContent()
+{
+  return m_dynamicUrl;
+}
+
 FvAvailableUpdate* FvUpdater::GetProposedUpdate()
 {
 	return m_proposedUpdate;
@@ -533,6 +544,10 @@ bool FvUpdater::searchDownloadedFeedForUpdates(QString xmlTitle,
         showErrorDialog(tr("Feed error: invalid \"enclosure\" with the download link"), NO_UPDATE_MESSAGE);
 		return false;
 	}
+
+	// Append dynamic url content - if supported in EnclosureUrl
+  xmlEnclosureUrl = xmlEnclosureUrl.arg(m_dynamicUrl);
+  qDebug() << "Download URL:" << xmlEnclosureUrl;
 
 	// Relevant version?
 	if (FVIgnoredVersions::VersionIsIgnored(xmlEnclosureVersion)) {

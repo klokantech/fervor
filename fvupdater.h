@@ -26,6 +26,10 @@ public:
 	void SetFeedURL(QString feedURL);
 	QString GetFeedURL();
 
+  // Set /get Dynamic download URL content
+  void SetDynamicUrlContent(QString dynamicUrl);
+  QString GetDynamicUrlContent();
+
 public slots:
 
 	// Check for updates
@@ -112,6 +116,7 @@ private:
 	// HTTP feed fetcher infrastructure
 	//
 	QUrl m_feedURL;					// Feed URL that will be fetched
+  QString m_dynamicUrl;      // Dynamic download URL content
 	QNetworkAccessManager m_qnam;
 	QNetworkReply* m_reply;
 	int m_httpGetId;
