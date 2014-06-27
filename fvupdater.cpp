@@ -546,7 +546,8 @@ bool FvUpdater::searchDownloadedFeedForUpdates(QString xmlTitle,
 	}
 
 	// Append dynamic url content - if supported in EnclosureUrl
-  xmlEnclosureUrl = xmlEnclosureUrl.arg(m_dynamicUrl);
+	if(xmlEnclosureUrl.contains('%'))
+    xmlEnclosureUrl = xmlEnclosureUrl.arg(m_dynamicUrl);
   qDebug() << "Download URL:" << xmlEnclosureUrl;
 
 	// Relevant version?
