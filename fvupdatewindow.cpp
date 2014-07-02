@@ -49,7 +49,11 @@ bool FvUpdateWindow::UpdateWindowWithCurrentProposedUpdate()
 	m_ui->wouldYouLikeToDownloadLabel->setText(downloadString);
 
 	m_ui->releaseNotesWebView->stop();
-	m_ui->releaseNotesWebView->load(proposedUpdate->GetReleaseNotesLink());
+  
+  if(proposedUpdate->ContainsReleaseNotesHtml())
+    m_ui->releaseNotesWebView->setHtml(proposedUpdate->GetReleaseNotesHtml());
+  else
+    m_ui->releaseNotesWebView->load(proposedUpdate->GetReleaseNotesLink());
 
 	return true;
 }

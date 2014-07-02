@@ -379,7 +379,8 @@ bool FvUpdater::xmlParseFeed()
 	QString currentTag, currentQualifiedTag;
 
 	QString xmlTitle, xmlLink, xmlReleaseNotesLink, xmlPubDate, xmlEnclosureUrl,
-			xmlEnclosureVersion, xmlEnclosurePlatform, xmlEnclosureType;
+			xmlEnclosureVersion, xmlEnclosurePlatform, xmlEnclosureType,
+      xmlReleaseNotesHtml;
 	unsigned long xmlEnclosureLength = 0;
 
 	// Parse
@@ -397,6 +398,7 @@ bool FvUpdater::xmlParseFeed()
 				xmlTitle.clear();
 				xmlLink.clear();
 				xmlReleaseNotesLink.clear();
+        xmlReleaseNotesHtml.clear();
 				xmlPubDate.clear();
 				xmlEnclosureUrl.clear();
 				xmlEnclosureVersion.clear();
@@ -462,6 +464,7 @@ bool FvUpdater::xmlParseFeed()
 				return searchDownloadedFeedForUpdates(xmlTitle,
 													  xmlLink,
 													  xmlReleaseNotesLink,
+                            xmlReleaseNotesHtml,
 													  xmlPubDate,
 													  xmlEnclosureUrl,
 													  xmlEnclosureVersion,
@@ -484,6 +487,9 @@ bool FvUpdater::xmlParseFeed()
 
 			} else if (currentTag == "pubDate") {
 				xmlPubDate += m_xml.text().toString().trimmed();
+
+      } else if (currentTag == "description") {
+        xmlReleaseNotesHtml += m_xml.text().toString().trimmed();
 
 			}
 
@@ -508,6 +514,7 @@ bool FvUpdater::xmlParseFeed()
 bool FvUpdater::searchDownloadedFeedForUpdates(QString xmlTitle,
 											   QString xmlLink,
 											   QString xmlReleaseNotesLink,
+                         QString xmlReleaseNotesHtml,
 											   QString xmlPubDate,
 											   QString xmlEnclosureUrl,
 											   QString xmlEnclosureVersion,
@@ -525,26 +532,32 @@ bool FvUpdater::searchDownloadedFeedForUpdates(QString xmlTitle,
     qDebug() << "Enclosure length:" << xmlEnclosureLength;
     qDebug() << "Enclosure type:" << xmlEnclosureType;
 
+	// Validate Release notes
+  if (xmlReleaseNotesHtml.isEmpty())
+  {
+    if (xmlReleaseNotesLink.isEmpty()) {
+      if (xmlLink.isEmpty()) {
+        showErrorDialog(tr("Feed error: \"release notes\" link is empty"), NO_UPDATE_MESSAGE);
+        return false;
+      } else {
+        xmlReleaseNotesLink = xmlLink;
+      }
+    } else {
+      xmlLink = xmlReleaseNotesLink;
+    }
+    if (! (xmlLink.startsWith("http://") || xmlLink.startsWith("https://"))) {
+      showErrorDialog(tr("Feed error: invalid \"release notes\" link"), NO_UPDATE_MESSAGE);
+      return false;
+    }
+  }
 	// Validate
-	if (xmlReleaseNotesLink.isEmpty()) {
-		if (xmlLink.isEmpty()) {
-			showErrorDialog(tr("Feed error: \"release notes\" link is empty"), NO_UPDATE_MESSAGE);
-			return false;
-		} else {
-			xmlReleaseNotesLink = xmlLink;
-		}
-	} else {
-		xmlLink = xmlReleaseNotesLink;
-	}
-	if (! (xmlLink.startsWith("http://") || xmlLink.startsWith("https://"))) {
-		showErrorDialog(tr("Feed error: invalid \"release notes\" link"), NO_UPDATE_MESSAGE);
-		return false;
-	}
 	if (xmlEnclosureUrl.isEmpty() || xmlEnclosureVersion.isEmpty() || xmlEnclosurePlatform.isEmpty()) {
         showErrorDialog(tr("Feed error: invalid \"enclosure\" with the download link"), NO_UPDATE_MESSAGE);
 		return false;
 	}
 
+	xmlEnclosureUrl = QUrl::fromPercentEncoding(xmlEnclosureUrl.toLatin1());
+  qDebug() << " decoded URL:" << xmlEnclosureUrl;
 	// Append dynamic url content - if supported in EnclosureUrl
 	if(xmlEnclosureUrl.contains('%'))
     xmlEnclosureUrl = xmlEnclosureUrl.arg(m_dynamicUrl);
@@ -570,7 +583,8 @@ bool FvUpdater::searchDownloadedFeedForUpdates(QString xmlTitle,
 	}
 	m_proposedUpdate = new FvAvailableUpdate();
 	m_proposedUpdate->SetTitle(xmlTitle);
-	m_proposedUpdate->SetReleaseNotesLink(xmlReleaseNotesLink);
+  m_proposedUpdate->SetReleaseNotesLink(xmlReleaseNotesLink);
+	m_proposedUpdate->SetReleaseNotesHtml(xmlReleaseNotesHtml);
 	m_proposedUpdate->SetPubDate(xmlPubDate);
 	m_proposedUpdate->SetEnclosureUrl(xmlEnclosureUrl);
 	m_proposedUpdate->SetEnclosureVersion(xmlEnclosureVersion);
@@ -597,6 +611,7 @@ void FvUpdater::showErrorDialog(QString message, msgType type)
   {
     if(type == NO_UPDATE_MESSAGE)
     {
+      qDebug() << " Error " << message;
       message = "No updates were found.";
     }
   }

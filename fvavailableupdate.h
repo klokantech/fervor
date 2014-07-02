@@ -13,9 +13,13 @@ public:
 	QString GetTitle();
 	void SetTitle(QString title);
 
-	QUrl GetReleaseNotesLink();
-	void SetReleaseNotesLink(QUrl releaseNotesLink);
-	void SetReleaseNotesLink(QString releaseNotesLink);
+  QUrl GetReleaseNotesLink();
+  void SetReleaseNotesLink(QUrl releaseNotesLink);
+  void SetReleaseNotesLink(QString releaseNotesLink);
+
+  bool ContainsReleaseNotesHtml();
+  QString GetReleaseNotesHtml();
+  void SetReleaseNotesHtml(QString releaseNotesHtml);
 
 	QString GetPubDate();
 	void SetPubDate(QString pubDate);
@@ -38,7 +42,8 @@ public:
 
 private:
 	QString m_title;
-	QUrl m_releaseNotesLink;
+  QUrl m_releaseNotesLink;
+	QString m_releaseNotesHtml;
 	QString m_pubDate;
 	QUrl m_enclosureUrl;
 	QString m_enclosureVersion;
