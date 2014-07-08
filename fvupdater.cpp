@@ -350,9 +350,11 @@ void FvUpdater::httpFeedDownloadFinished()
 	QVariant redirectionTarget = m_reply->attribute(QNetworkRequest::RedirectionTargetAttribute);
 	if (m_reply->error()) {
 
+    qDebug() << " error value " << m_reply->error();
 		// Error.
 //    showErrorDialog(tr("Feed download failed: %1.").arg(m_reply->errorString()), false);
 		showErrorDialog(tr("Updates are unable to detect: %1.").arg(m_reply->errorString()), CRITICAL_MESSAGE);
+    emit updatesDownloaded(false);
 
 	} else if (! redirectionTarget.isNull()) {
 		QUrl newUrl = m_feedURL.resolved(redirectionTarget.toUrl());
@@ -367,6 +369,7 @@ void FvUpdater::httpFeedDownloadFinished()
 
 		// Done.
 		xmlParseFeed();
+    emit updatesDownloaded(true);
 
 	}
 

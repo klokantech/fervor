@@ -39,6 +39,10 @@ public slots:
 	bool CheckForUpdatesSilent();
 	bool CheckForUpdatesNotSilent();
 
+signals:
+  // This signal will inform, whether network is accessible or not
+  void updatesDownloaded(bool success);
+
 
 	//
 	// ---------------------------------------------------
