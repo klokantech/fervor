@@ -14,7 +14,7 @@ FVIgnoredVersions::FVIgnoredVersions(QObject *parent) :
 	// noop
 }
 
-bool FVIgnoredVersions::VersionIsIgnored(QString version)
+bool FVIgnoredVersions::VersionIsIgnored(QString version, bool testIgnored)
 {
 	// We assume that variable 'version' contains either:
 	//	1) The current version of the application (ignore)
@@ -40,7 +40,8 @@ bool FVIgnoredVersions::VersionIsIgnored(QString version)
 
 	if (settings.contains(FV_IGNORED_VERSIONS_LATEST_SKIPPED_VERSION_KEY)) {
 		QString lastSkippedVersion = settings.value(FV_IGNORED_VERSIONS_LATEST_SKIPPED_VERSION_KEY).toString();
-		if (version == lastSkippedVersion) {
+		// If testIgnored version is enabled, we do not want skip ignored version
+		if (version == lastSkippedVersion && !testIgnored) {
 			// Implicitly skipped version - skip
 			return true;
 		}
