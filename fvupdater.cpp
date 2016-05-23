@@ -525,15 +525,15 @@ bool FvUpdater::searchDownloadedFeedForUpdates(QString xmlTitle,
 											   unsigned long xmlEnclosureLength,
 											   QString xmlEnclosureType)
 {
-    qDebug() << "Title:" << xmlTitle;
-    qDebug() << "Link:" << xmlLink;
-    qDebug() << "Release notes link:" << xmlReleaseNotesLink;
-    qDebug() << "Pub. date:" << xmlPubDate;
-    qDebug() << "Enclosure URL:" << xmlEnclosureUrl;
-    qDebug() << "Enclosure version:" << xmlEnclosureVersion;
-    qDebug() << "Enclosure platform:" << xmlEnclosurePlatform;
-    qDebug() << "Enclosure length:" << xmlEnclosureLength;
-    qDebug() << "Enclosure type:" << xmlEnclosureType;
+    // qDebug() << "Title:" << xmlTitle;
+    // qDebug() << "Link:" << xmlLink;
+    // qDebug() << "Release notes link:" << xmlReleaseNotesLink;
+    // qDebug() << "Pub. date:" << xmlPubDate;
+    // qDebug() << "Enclosure URL:" << xmlEnclosureUrl;
+    // qDebug() << "Enclosure version:" << xmlEnclosureVersion;
+    // qDebug() << "Enclosure platform:" << xmlEnclosurePlatform;
+    // qDebug() << "Enclosure length:" << xmlEnclosureLength;
+    // qDebug() << "Enclosure type:" << xmlEnclosureType;
 
 	// Validate Release notes
   if (xmlReleaseNotesHtml.isEmpty())
@@ -560,11 +560,11 @@ bool FvUpdater::searchDownloadedFeedForUpdates(QString xmlTitle,
 	}
 
 	xmlEnclosureUrl = QUrl::fromPercentEncoding(xmlEnclosureUrl.toLatin1());
-  qDebug() << " decoded URL:" << xmlEnclosureUrl;
+  // qDebug() << " decoded URL:" << xmlEnclosureUrl;
 	// Append dynamic url content - if supported in EnclosureUrl
 	if(xmlEnclosureUrl.contains('%'))
     xmlEnclosureUrl = xmlEnclosureUrl.arg(m_dynamicUrl);
-  qDebug() << "Download URL:" << xmlEnclosureUrl;
+  // qDebug() << "Download URL:" << xmlEnclosureUrl;
 
 	// Relevant version?
 	// If not silent, check also ignored version
