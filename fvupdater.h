@@ -11,6 +11,9 @@ class FvUpdateConfirmDialog;
 class FvAvailableUpdate;
 
 
+typedef int (*check_before_update_callback)(void *, void *);
+
+
 class FvUpdater : public QObject
 {
 	Q_OBJECT
@@ -29,6 +32,8 @@ public:
   // Set /get Dynamic download URL content
   void SetDynamicUrlContent(QString dynamicUrl);
   QString GetDynamicUrlContent();
+
+  void SetCheckBeforeUpdate(check_before_update_callback callback, void* context);
 
 public slots:
 
@@ -125,6 +130,9 @@ private:
 	QNetworkReply* m_reply;
 	int m_httpGetId;
 	bool m_httpRequestAborted;
+
+	check_before_update_callback check_callback;
+	void* check_context;
 
 	void startDownloadFeed(QUrl url);	// Start downloading feed
 	void cancelDownloadFeed();			// Stop downloading the current feed
